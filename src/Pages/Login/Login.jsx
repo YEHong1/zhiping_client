@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button} from "antd-mobile";
+import './Login.css'
 
 export default class Login extends Component {
 
@@ -10,7 +10,9 @@ export default class Login extends Component {
 
     render() {
         return (
-            <Button type='primary'>Hello</Button>
+            <div className='register-container'>
+
+            </div>
         )
     }
 }
