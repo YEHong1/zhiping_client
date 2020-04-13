@@ -8,32 +8,25 @@ import {
     List,
     InputItem,
     WhiteSpace,
-    Radio,
     Button,
     Modal
 } from 'antd-mobile'
 import Logo from "../../Componments/logo/logo";
+import {errorMsg, login} from "../../redux/actionCreator";
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
+import {Redirect} from 'react-router-dom';
 
-const ListItem = List.Item;
 
-export default class Register extends Component {
+class Login extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             username: '',
             password: '',
-            showModal: false, // 控制弹窗的显示与隐藏
-            errorText: '', // 弹窗显示的错误文本
         }
     }
-
-    // 控制弹窗的显示与隐藏
-    changeModalStatus = (flag) => {
-        this.setState({
-            showModal: flag
-        })
-    };
 
     // 更新用户输入的数据
     handleChange = (name, value)=>{
@@ -42,14 +35,18 @@ export default class Register extends Component {
         })
     };
 
-    // 去注册
+    // 跳转到登录界面
     goLogin = ()=>{
-        const {username, password} = this.state;
+        this.props.login(this.state);
     };
 
 
     render() {
-        const {type, showModal, errorText} = this.state;
+        const {msg, redireactPath} = this.props.user;
+        if(redireactPath){
+            return <Redirect to={redireactPath}/>
+        }
+
         return (
             <div>
                 <NavBar>硅&nbsp;谷&nbsp;直&nbsp;聘</NavBar>
@@ -65,25 +62,38 @@ export default class Register extends Component {
                             this.handleChange('password', value);
                         }}>密&nbsp;&nbsp;&nbsp;码:</InputItem>
                         <WhiteSpace/>
-                        <Button type='primary' onClick={this.register} >登&nbsp;&nbsp;&nbsp;录</Button>
-                        <WhiteSpace/>
+                        <Button type='primary' onClick={this.goLogin} >登&nbsp;&nbsp;&nbsp;录</Button>
                     </List>
                 </WingBlank>
 
                 {/*错误提示弹窗*/}
-                <Modal
-                    visible={showModal}
-                    transparent
-                    maskClosable={true}
-                    animationType='fade'
-                    onClose={()=>{this.changeModalStatus(false)}}
-                    title="提示"
-                    footer={[{ text: '知道了', onPress: () => {this.changeModalStatus(false)} }]}
-                >
-                    <p>{errorText}</p>
-                </Modal>
+                {msg !== undefined ?
+                    <Modal
+                        visible={msg}
+                        transparent
+                        maskClosable={true}
+                        animationType='up'
+                        onClose={()=>{this.props.errorMsg(undefined);}}
+                        title="提示"
+                        footer={[{ text: '知道了', onPress: () => {
+                                this.props.errorMsg(undefined);
+                            } }]}
+                    >
+                        <p>{msg}</p>
+                    </Modal> : null}
+
 
             </div>
         )
     }
 }
+
+Login.propTypes = {
+    errorMsg: PropTypes.func,
+    login: PropTypes.func,
+};
+
+export default connect(
+    state => ({user: state.user}),
+    {errorMsg, login}
+)(Login);

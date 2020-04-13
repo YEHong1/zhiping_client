@@ -13,10 +13,14 @@ import {
     Modal
 } from 'antd-mobile'
 import Logo from "../../Componments/logo/logo";
+import {errorMsg, register} from "../../redux/actionCreator";
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
+import {Redirect} from 'react-router-dom';
 
 const ListItem = List.Item;
 
-export default class Register extends Component {
+class Register extends Component {
 
     constructor(props) {
         super(props);
@@ -25,17 +29,8 @@ export default class Register extends Component {
             password: '',
             passwordAgain: '',
             type: 'jobHunter', // jobHunter(求职者) / boss(老板)
-            showModal: false, // 控制弹窗的显示与隐藏
-            errorText: '', // 弹窗显示的错误文本
         }
     }
-
-    // 控制弹窗的显示与隐藏
-    changeModalStatus = (flag) => {
-        this.setState({
-            showModal: flag
-        })
-    };
 
     // 更新用户输入的数据
     handleChange = (name, value)=>{
@@ -45,28 +40,9 @@ export default class Register extends Component {
     };
 
     // 去注册
-    register = ()=>{
+    goRegister = async ()=>{
         const {username, password, passwordAgain, type} = this.state;
-
-        if(!username || !password || !passwordAgain){
-            this.setState({
-                errorText: '用户名、密码不能为空！'
-            }, ()=>{
-                this.changeModalStatus(true);
-            });
-            return;
-        }
-
-        if(password !== passwordAgain){
-            this.setState({
-                errorText: '两次输入的密码不一致'
-            }, ()=>{
-                this.changeModalStatus(true);
-            });
-            // return
-        }
-
-
+        this.props.register({username, password, passwordAgain, type});
     };
 
     // 跳转到登录界面
@@ -76,7 +52,12 @@ export default class Register extends Component {
 
 
     render() {
-        const {type, showModal, errorText} = this.state;
+        const {type} = this.state;
+        const {msg, redireactPath} = this.props.user;
+        if(redireactPath){
+            return <Redirect to={redireactPath}/>
+        }
+
         return (
             <div>
                 <NavBar>硅&nbsp;谷&nbsp;直&nbsp;聘</NavBar>
@@ -108,26 +89,40 @@ export default class Register extends Component {
                             }}>&nbsp;招聘者</Radio>
                         </ListItem>
                         <WhiteSpace/>
-                        <Button type='primary' onClick={this.register} >注&nbsp;&nbsp;&nbsp;册</Button>
+                        <Button type='primary' onClick={this.goRegister} >注&nbsp;&nbsp;&nbsp;册</Button>
                         <WhiteSpace/>
                         <Button onClick={this.goLogin} >已有账户</Button>
                     </List>
                 </WingBlank>
 
                 {/*错误提示弹窗*/}
+                {msg !== undefined ?
                 <Modal
-                    visible={showModal}
+                    visible={msg}
                     transparent
                     maskClosable={true}
-                    animationType='fade'
-                    onClose={()=>{this.changeModalStatus(false)}}
+                    animationType='up'
+                    onClose={()=>{this.props.errorMsg(undefined);}}
                     title="提示"
-                    footer={[{ text: '知道了', onPress: () => {this.changeModalStatus(false)} }]}
+                    footer={[{ text: '知道了', onPress: () => {
+                            this.props.errorMsg(undefined);
+                        } }]}
                 >
-                    <p>{errorText}</p>
-                </Modal>
+                    <p>{msg}</p>
+                </Modal> : null}
+
 
             </div>
         )
     }
 }
+
+Register.propTypes = {
+    errorMsg: PropTypes.func,
+    register: PropTypes.func,
+};
+
+export default connect(
+    state => ({user: state.user}),
+    {errorMsg, register}
+)(Register);
