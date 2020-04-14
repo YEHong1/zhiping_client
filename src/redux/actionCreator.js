@@ -1,5 +1,5 @@
 import {AUTH_SUCCESS, ERROR_MSG, RECEIVE_USER, RESET_USER} from "./action-types";
-import {reqRegister, reqLogin, reqUpdateUser} from "../api";
+import {reqRegister, reqLogin, reqUpdateUser, reqUserInfo} from "../api";
 
 // 授权成功的同步action
 const authSuccess = (user) => ({type: AUTH_SUCCESS, data: user});
@@ -65,6 +65,19 @@ export const updateUser = (user)=>{
         }else {
             // 更新成功
             dispatch(receiveUser(result.data));
+        }
+    }
+};
+
+// 通过cookie获取用户信息的异步action
+export const getUserInfo = () => {
+    return async dispatch => {
+        const response = await reqUserInfo();
+        const result = response.data;
+        if(result.code === 0){
+            dispatch(receiveUser(result.data));
+        }else {
+            dispatch(resetUser(result.msg));
         }
     }
 };

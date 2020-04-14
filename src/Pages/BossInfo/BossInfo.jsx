@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {InputItem, NavBar, TextareaItem, Button} from "antd-mobile";
 import {connect} from 'react-redux';
+import {Redirect} from 'react-router-dom';
 import {updateUser} from "../../redux/actionCreator";
 import AvatarSelect from "../../Componments/AvatarSelect/AvatarSelect";
 
@@ -34,7 +35,15 @@ class BossInfo extends Component {
     };
 
     render() {
-        return (
+
+        const {header, type} = this.props.user;
+        //如果header有值，说明用户信息已经完善了
+        if(header){
+            const path = type === 'boss' ? '/boss' : '/jobHunter';
+            return <Redirect to={path}/>
+        }
+
+     return (
             <div>
                 <NavBar>老板信息完善</NavBar>
                 <AvatarSelect setheader={this.setheader}/>
