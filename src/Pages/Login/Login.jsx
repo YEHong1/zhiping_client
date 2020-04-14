@@ -81,8 +81,6 @@ class Login extends Component {
                     >
                         <p>{msg}</p>
                     </Modal> : null}
-
-
             </div>
         )
     }

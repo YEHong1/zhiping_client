@@ -1,5 +1,6 @@
 import {combineReducers} from "redux";
-import {AUTH_SUCCESS, ERROR_MSG} from "./action-types";
+import {AUTH_SUCCESS, ERROR_MSG, RECEIVE_USER, RESET_USER} from "./action-types";
+import {getRedirectPath} from "../utils";
 
 const initUser = {
     username: '', // 用户名
@@ -12,9 +13,14 @@ function user (state=initUser, action) {
     switch (action.type) {
         case AUTH_SUCCESS:
             // 这个先把state里的数据取出来，再用action.data来覆盖前面对象中相同的属性名的属性值
-            return {...state, ...action.data, redireactPath: '/'};
+            const {type, header} = action.data;
+            return {...state, ...action.data, redireactPath: getRedirectPath(type, header)};
         case ERROR_MSG:
             return {...state, msg: action.data};
+        case RECEIVE_USER:
+            return {...state, ...action.data};
+        case RESET_USER:
+            return {...initUser, msg: action.data};
         default:
             return state
     }
