@@ -11,3 +11,6 @@ export const reqUpdateUser = (user) => ajax('/update', user, 'POST');
 
 // 通过cookie获取用户信息
 export const reqUserInfo = () => ajax('/getUserInfo');
+
+// 获取用户列表
+export const reqUserList = (type) => ajax('/getUserList', {type});

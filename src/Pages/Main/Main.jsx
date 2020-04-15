@@ -2,16 +2,53 @@ import React, {Component} from 'react';
 import {Route, Switch, Redirect} from 'react-router-dom';
 import BossInfo from "../BossInfo/BossInfo";
 import JobHunterInfo from "../JobHunterInfo/JobHunterInfo";
+import Boss from "../Boss/Boss";
+import JobHunter from "../JobHunter/JobHunter";
+import Message from "../Message/Message";
+import Mine from "../Mine/Mine";
+import NotFount from "../NotFount/NotFount";
+import NavBottom from "../../Componments/NavBottom/NavBottom";
 import {connect} from 'react-redux';
 import Cookies from 'js-cookie'; // 操作cookie set/get/remove
 import {getRedirectPath} from "../../utils";
 import {getUserInfo} from "../../redux/actionCreator";
+import {NavBar} from "antd-mobile";
 
 class Main extends Component {
 
     constructor(props) {
         super(props);
         this.state = {};
+        this.navList = [ // 包含所有导航组件的相关信息数据
+            {
+                path: '/boss', // 路由路径
+                component: Boss,
+                title: '求职者列表',
+                icon: 'boss',
+                text: '招人',
+            },
+            {
+                path: '/jobHunter', // 路由路径
+                component: JobHunter,
+                title: '招聘者列表',
+                icon: 'jobHunter',
+                text: '找工作',
+            },
+            {
+                path: '/message', // 路由路径
+                component: Message,
+                title: '消息列表',
+                icon: 'message',
+                text: '消息',
+            },
+            {
+                path: '/mine', // 路由路径
+                component: Mine,
+                title: '用户中心',
+                icon: 'mine',
+                text: '个人',
+            }
+        ]
     }
 
     componentDidMount() {
@@ -51,13 +88,37 @@ class Main extends Component {
         }
 
 
+        const {navList} = this;
+        //获取当前的路由路径
+        const path = this.props.location.pathname;
+        // 获取当前的nav
+        const currentNav = navList.find(item => item.path === path);
+        if(currentNav){
+            // 隐藏不符合身份类型的nav
+            if(user.type === 'boss'){
+                navList[1].hide = true;
+            }else {
+                navList[0].hide = true;
+            }
+        }
 
         return (
-            <div>
+            <div style={{minHeight: '100%'}}>
+                {
+                    currentNav ? <NavBar style={{position: 'fixed', top: 0, width: '100%', zIndex: 999}}>{currentNav.title}</NavBar> : null
+                }
                 <Switch>
                     <Route path='/bossInfo' component={BossInfo}/>
                     <Route path='/jobHunterInfo' component={JobHunterInfo}/>
+                    <Route path='/boss' component={Boss}/>
+                    <Route path='/jobHunter' component={JobHunter}/>
+                    <Route path='/message' component={Message}/>
+                    <Route path='/mine' component={Mine}/>
+                    <Route component={NotFount}/>
                 </Switch>
+                {
+                    currentNav ? <NavBottom navList={navList}/> : null
+                }
             </div>
         )
     }

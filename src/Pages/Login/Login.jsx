@@ -63,6 +63,8 @@ class Login extends Component {
                         }}>密&nbsp;&nbsp;&nbsp;码:</InputItem>
                         <WhiteSpace/>
                         <Button type='primary' onClick={this.goLogin} >登&nbsp;&nbsp;&nbsp;录</Button>
+                        <WhiteSpace/>
+                        <Button onClick={()=>{this.props.history.replace('/register')}} >还没有账号</Button>
                     </List>
                 </WingBlank>
 

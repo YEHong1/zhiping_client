@@ -1,0 +1,7 @@
+/*覆盖antd TabBar组件的样式，让TabBar的位置处于屏幕底部*/
+.am-tab-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: inherit;
+}

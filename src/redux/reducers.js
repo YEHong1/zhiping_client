@@ -1,5 +1,5 @@
 import {combineReducers} from "redux";
-import {AUTH_SUCCESS, ERROR_MSG, RECEIVE_USER, RESET_USER} from "./action-types";
+import {AUTH_SUCCESS, ERROR_MSG, RECEIVE_USER, RESET_USER, RECEIVE_USER_LIST} from "./action-types";
 import {getRedirectPath} from "../utils";
 
 const initUser = {
@@ -8,7 +8,7 @@ const initUser = {
     msg: '',      // 错误提示信息
     redireactPath: '' //需要重定向的路径
 };
-
+// 用户信息的reducer
 function user (state=initUser, action) {
     switch (action.type) {
         case AUTH_SUCCESS:
@@ -26,7 +26,17 @@ function user (state=initUser, action) {
     }
 }
 
+// 用户列表的reducer
+function userList(state = [], action) {
+    if (action.type === RECEIVE_USER_LIST) {
+        return action.data;
+    } else {
+        return state
+    }
+}
+
 
 export default combineReducers({
-    user
+    user,
+    userList
 })
